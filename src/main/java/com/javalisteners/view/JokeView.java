@@ -1,6 +1,6 @@
 package com.javalisteners.view;
 
-
+import com.javalisteners.interfaces.JokeButtonListener;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -10,51 +10,23 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
+import javax.swing.event.EventListenerList;
 
 public class JokeView
 {
-	/**
-	 * The Stage object that displays the scene.
-	 */
+	private final EventListenerList listeners = new EventListenerList();
+
 	private final Stage stage;
-	/**
-	 * The Scene object.
-	 */
 	private final Scene scene;
-	/**
-	 * A BorderPane object to layout the user interface elements.
-	 */
 	private final BorderPane pane;
-	/**
-	 * The Label object to display a joke.
-	 */
 	private final Label jokeLabel;
-	/**
-	 * The Button object to trigger a new joke.
-	 */
 	private final Button jokeButton;
 	
-	
-	/**
-	 * Constructor for the JokeView, creates and initializes the user interface.
-	 *
-	 * @param stage object that displays the area scene.
-	 */
 	public JokeView(Stage stage)
 	{
-		//this.delegate = delegate;
-
-		// Stage
 		this.stage = stage;
-
-		// Layout
 		this.pane = new BorderPane();
-
-		// Number Label
 		this.jokeLabel = new Label("Joke");
-
-		// Number Button
 		this.jokeButton = new Button("Erzähl mir einen Witz!");
 		this.jokeButton.setOnAction(new JokeButtonEventHandler());
 
@@ -64,14 +36,10 @@ public class JokeView
 		vbox.setStyle("-fx-background-color: #336699;");
 		vbox.getChildren().addAll(this.jokeButton, this.jokeLabel);
 
-		// Set scene size
 		this.scene = new Scene(this.pane, 500, 300);
 		this.pane.setCenter(vbox);
 	}
 	
-	/**
-	 * This method sets the scene to the stage and displays it.
-	 */
 	public void showJokeView()
 	{
 		this.stage.setTitle("Schlechte Witze für alle");
@@ -79,27 +47,35 @@ public class JokeView
 		this.stage.show();
 	}
 
-	/**
-	 * Updates the joke label
-	 */
-	public void updateLabel()
+	public void updateLabel(String string)
 	{
-		
+		this.jokeLabel.setText(string);
 	}
 
-	/**
-	 * The EventHandler subclass for the button.
-	 */
+	public void addAdListener(JokeButtonListener listener) 
+	{
+		this.listeners.add(JokeButtonListener.class, listener);
+	}
+	
+	public void removeAdListener(JokeButtonListener listener)
+	{
+		this.listeners.remove(JokeButtonListener.class, listener);
+	}
+
+	protected synchronized void notifyListeners()
+	{
+		for (JokeButtonListener listener : this.listeners.getListeners(JokeButtonListener.class))
+		{
+			listener.didPressJokeButton();
+		}
+	}
+	
+	
 	class JokeButtonEventHandler implements EventHandler
 	{
-		/**
-		 * This callback handles the button click and delegates it.
-		 *
-		 * @param event The button's click event.
-		 */
 		public void handle(Event event)
 		{
-
+			JokeView.this.notifyListeners();
 		}
 	}
 }
