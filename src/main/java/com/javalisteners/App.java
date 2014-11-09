@@ -1,13 +1,31 @@
 package com.javalisteners;
 
+import com.javalisteners.controller.JokeController;
+import javafx.application.Application;
+import static javafx.application.Application.launch;
+import javafx.stage.Stage;
+
 /**
- * Hello world!
  *
  */
-public class App 
+public class App extends Application
 {
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
-    }
+	/**
+	 * Entry method for the game, creates the JokeController.
+	 * @param primaryStage The primary stage object, gets passed to the controller.
+	 */
+	public void start(Stage primaryStage)
+	{
+		JokeController areaController;
+		areaController = new JokeController(primaryStage);
+	}
+
+	/**
+	 * Fallback if start method doesn't get called.
+	 * @param args the command line arguments
+	 */
+	public static void main(String[] args)
+	{
+		launch(args);
+	}	
 }
